@@ -1,6 +1,8 @@
 # particlebomb_to_edepsim
 
-This repository was generated using `LiteFMWK`, a framework generator for linking C++ and python code. The documentation for LiteFMWK is copied here for convenience. All credit for the documentation and creation of LiteFMWK goes to the user drinkingkazu. 
+This repository was generated using `LiteFMWK`, a framework generator for linking C++ and python code. The documentation for LiteFMWK is copied here for convenience. All credit for the documentation and creation of LiteFMWK goes to the user drinkingkazu.
+
+# LiteFMWK
 
 `LiteFMWK` is a software development base that allows you to:
 * Generate a software _package_ where you can generate arbitrary number of C++ class/function and compile into 1 library
@@ -52,3 +54,26 @@ No one wants to `cd` package directory and `make` for every package. You can uti
 Sometimes you don't want to expose your C++ class to an interpreter.
 Assuming your C++ class is already registered in the dictionary (a mechanism to make your class available in an interpreter), simply exclude it from `LinkDef.h`.
 
+<<<<<<< HEAD
+=======
+If you wonder when you want to do it, here's some example reasons:
+* Compilation is so slow (auto-generated dictionary source code is usually _really_ long, like easily 10,000 lines, taking long time to compile)
+* Ugh I keep getting dictionary compilation error (auto-generation of dictionary source code is far from being perfect, especially for the latest C++ standards... if troublesome, exclude)
+
+## Making inter-package dependencies
+To make one package depend on another, you typically want to know 2 information: headers to be included and libraries to be linked against.
+Here are two pieces of information you may find it useful/handy:
+*  Package libraries are compiled and available under `$MYSW_LIBDIR/libLiteFMWK_$(PACKAGE_NAME).so`
+*  Package header files are copied and available under `$MYSW_INCDIR/litefmwk/$(PACKAGE_NAME)`
+... where you substitute `$(PACKAGE_NAME)` with the actual name string.
+
+With these info, you know what you need to do for your new package compilation that depends on those.
+
+1. Add compiler flags
+  * `-I$(MYSW_INCDIR)`
+  * `-L$(MYSW_LIBDIR) -lLiteFMWK_$(PACKAGE_NAME).so`
+  
+2. Include statements in the source codes
+  * `#include "litefmwk/$(PACKAGE_NAME)/$(WANTED_HEADER)"`
+  * ... where `$(WANTED_HEADER)` is the header file you want (like `sample.h`).
+>>>>>>> deb11d82c1b90be3d1e1dadfc485d40fb747a0ad
