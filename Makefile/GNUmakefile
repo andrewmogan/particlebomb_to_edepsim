@@ -3,6 +3,10 @@ ifndef MYSW_DIR
 ERROR_MESSAGE := $(error MYSW_DIR is not set... run configure.sh!)
 endif
 
+ifndef EDEP_ROOT
+ERROR_MESSAGE := $(error EDEP_ROOT is not set. Source setup.sh in your edep-sim directory!)
+endif
+
 OSNAME          = $(shell uname -s)
 HOST            = $(shell uname -n)
 OSNAMEMODE      = $(OSNAME)
