@@ -32,26 +32,29 @@ namespace particlebomb_to_edepsim {class ParticleBombKinematicsGenerator;}
      doxygen documentation!
   */
 class particlebomb_to_edepsim::ParticleBombKinematicsGenerator : public EDepSim::VKinematicsGenerator { 
+
     public:
     
         ParticleBombKinematicsGenerator(const G4String& name, 
-                                      const G4String& fileName,
-                                      const G4String& order,
-                                      int firstEvent);
+                                        std::string fileName
+                                        /* Unclear if we need these or not?
+                                        //const G4String& order = "consecutive",
+                                        //int firstEvent = 0
+                                        */
+        );
 
         virtual ~ParticleBombKinematicsGenerator(); 
         
+        /// The static part of the file name field.
+        std::string fFilename;
+
         /// Add a primary vertex to the event.
-        virtual GeneratorStatus GeneratePrimaryVertex(
-        G4Event* evt, const G4LorentzVector& position);
+        virtual GeneratorStatus GeneratePrimaryVertex(std::string fileName);
 
         /// Get the name of the open kinematics file.
         virtual G4String GetInputName();
 
     private:
-        /// The static part of the file name field.
-        std::string fFilename;
-
         /// The HEPEVT-style ParticleBomb file to read.
         TFile* fInput;
 
@@ -105,9 +108,23 @@ class particlebomb_to_edepsim::ParticleBombKinematicsGenerator : public EDepSim:
         /// The maximum number of particles that can be in the particle arrays.
         static const int kNPmax = 4000;
 
-        /// The PDG codes for the particles to track.  This may include generator
-        /// specific codes for pseudo particles.
-        int         fStdHepPdg[kNPmax]; //[fStdHepN]
+        /* Format to write:
+        * 0.  status code … 1 = feed in Geant4, other values mean don’t track (but useful for the record)
+        * 1.  P DG code … an identifier for a type of a particle. See this reference to decode.
+        * 2.  Line number of the first parent particle (0 for initial entries)
+        * 3.  Line number of the second parent particle
+        * 4.  Line number of the first child particle
+        * 5.  Line number of the last child particle
+        * 6.  x momentum [GeV/c]
+        * 7.  y momentum [GeV/c]
+        * 8.  z momentum [GeV/c]
+        * 9.  energy [GeV]
+        * 10. mass [GeV/c^2]
+        * 11. x position [mm]
+        * 12. y position [mm]
+        * 13. z position [mm]
+        * 14. time [ns]
+        */
 
         /// The a generator specific status for each particle.  Particles with a
         /// status equal to 1 will be tracked.
@@ -141,6 +158,45 @@ class particlebomb_to_edepsim::ParticleBombKinematicsGenerator : public EDepSim:
         ///            this particle produced daughters to be tracked, they will
         ///            have a state of 1.
         int         fStdHepStatus[kNPmax]; //[fStdHepN]
+
+        /// The PDG codes for the particles to track.  This may include generator
+        /// specific codes for pseudo particles.
+        int         fStdHepPdg[kNPmax]; //[fStdHepN]
+
+        /// The entry (or line number) of the first mother for this event; 0
+        /// means no mother
+        int         fStdHepFirstMother[kNPmax];
+
+        /// The entry (or line number) of the second mother for this event; 0
+        /// means no mother
+        int         fStdHepSecondMother[kNPmax];
+
+        /// The entry (or line number) of the first daughter for this event; 0
+        /// means no daughter
+        int         fStdHepFirstDaughter[kNPmax];
+
+        /// The entry (or line number) of the second daughter for this event; 0
+        /// means no daughter
+        int         fStdHepSecondDaughter[kNPmax];
+
+        /// Particle x-, y-, and z-momentum components [GeV/c]
+        double      fStdHepPx[kNPmax];
+        double      fStdHepPy[kNPmax];
+        double      fStdHepPz[kNPmax];
+
+        /// Particle energy [GeV]
+        double      fStdHepE[kNPmax];
+
+        /// Particle mass [GeV/c^2]
+        double      fStdHepMass[kNPmax];
+
+        /// Particle x-, y-, and z-positions [mm]
+        double      fStdHepX[kNPmax];
+        double      fStdHepY[kNPmax];
+        double      fStdHepZ[kNPmax];
+
+        /// Time of particle generation [ns]
+        double      fStdHepT[kNPmax];
 
         /// The position (x, y, z, t) (fm, second) of the particle in the nuclear
         /// frame
